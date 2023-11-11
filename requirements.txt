@@ -1,0 +1,5 @@
+minineedle
+numpy
+openai-whisper
+librosa
+langcodes
