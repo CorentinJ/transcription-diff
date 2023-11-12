@@ -22,10 +22,15 @@ correct_transcription = \
 # import sounddevice as sd
 # sd.play(wav, sr, blocking=True)
 
+
 # Running with all default parameters
 diff = transcription_diff(correct_transcription, wav, sr)
 print(render_text_diff(diff))
 
-#
+# Providing hints to custom words to whisper has a chance to make it transcribe that word
 diff = transcription_diff(correct_transcription, wav, sr, custom_words=["Guenever"])
+print(render_text_diff(diff))
+
+# Increase the model size generally increases ASR accuracy
+diff = transcription_diff(correct_transcription, wav, sr, custom_words=["Guenever"], whisper_model_size=3)
 print(render_text_diff(diff))

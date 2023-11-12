@@ -44,22 +44,22 @@ def get_whisper_model(model_size=3, english_only=False, device="cuda"):
 
 @overload
 def whisper_asr(
-    wav: np.ndarray, sr, *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
+    wav: np.ndarray, sr, *, audio_lang: str=None, whisper_model_size=2, custom_words=[], device="cuda"
 ) -> Tuple[str, str]: ...
 @overload
 def whisper_asr(
-    wavs: Iterable[np.ndarray], sr, *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
+    wavs: Iterable[np.ndarray], sr, *, audio_lang: str=None, whisper_model_size=2, custom_words=[], device="cuda"
 ) -> Tuple[List[str], str]: ...
 @overload
 def whisper_asr(
-    fpath: Union[str, Path], *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
+    fpath: Union[str, Path], *, audio_lang: str=None, whisper_model_size=2, custom_words=[], device="cuda"
 ) -> Tuple[str, str]: ...
 @overload
 def whisper_asr(
-    fpaths: Iterable[Union[str, Path]], *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
+    fpaths: Iterable[Union[str, Path]], *, audio_lang: str=None, whisper_model_size=2, custom_words=[], device="cuda"
 ) -> Tuple[List[str], str]: ...
 def whisper_asr(
-    *args, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
+    *args, audio_lang: str=None, whisper_model_size=2, custom_words=[], device="cuda"
 ) -> Union[Tuple[str, str], Tuple[List[str], str]]:
     """
     Performs automatic speech recognition on the given audio(s). Supports most languages, and can perform automatic
@@ -69,7 +69,7 @@ def whisper_asr(
     :param audio_lang: the lang code of the input audio as an IETF language tag (e.g. "en-us", "fr", ...), if known.
     When None, the language is automatically determined by the model. If provided and the language is English,
     the English-only whisper model will be used.
-    :param accuracy_mode: controls the accuracy-speed tradeoff. Ranges from 1 to 5, which 5 being the highest
+    :param whisper_model_size: controls the accuracy-speed tradeoff. Ranges from 1 to 5, which 5 being the highest
     accuracy (largest model size) but the lowest inference speed. This parameter has a large impact, consider setting
     it as high as you can afford to.
     :param custom_words: a list of words likely to be unknown to Whisper. We'll attempt to make whisper aware of them
@@ -128,7 +128,7 @@ def whisper_asr(
         device = "cpu"
 
     # Inference
-    model = get_whisper_model(model_size=accuracy_mode, english_only=(audio_lang == "en"), device=device)
+    model = get_whisper_model(model_size=whisper_model_size, english_only=(audio_lang == "en"), device=device)
     device = next(model.parameters()).device
     options = whisper.DecodingOptions(
         language=audio_lang,
