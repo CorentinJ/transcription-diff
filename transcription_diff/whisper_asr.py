@@ -105,7 +105,7 @@ def whisper_asr(
     # Resample
     # TODO?: batched resampling using torchaudio for efficiency
     wavs = [
-        librosa.core.resample(wav, orig_sr=sr, target_sr=_WHISPER_SAMPLE_RATE, res_type="soxr_mq")
+        librosa.core.resample(wav, orig_sr=sr, target_sr=_WHISPER_SAMPLE_RATE)
         for wav in wavs
     ]
 
