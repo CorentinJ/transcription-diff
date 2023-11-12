@@ -77,7 +77,8 @@ def whisper_asr(
     by passing them to the initial prompt.
     :return: a tuple:
     - The transcription(s) as a string or list of strings
-    - The detected language ID of the first sample if <audio_lang> was None, <audio_lang> otherwise.
+    - The detected language ID of the first sample if <audio_lang> was None, the whisper equivalent of <audio_lang>
+    otherwise.
     """
     # Audio args parsing
     if len(args) == 1:
@@ -137,7 +138,7 @@ def whisper_asr(
         # TODO?: support for timestamped ASR
         without_timestamps=True,
         fp16=device.type != "cpu",
-        # TODO: initial prompt
+        # TODO?: a more reliable way of expecting custom words? Maybe something with beam decoding?
         prompt=f"CUSTOM_WORDS={','.join(custom_words)}" if custom_words else None,
     )
     with torch.inference_mode():
