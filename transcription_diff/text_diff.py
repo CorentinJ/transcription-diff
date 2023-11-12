@@ -84,14 +84,14 @@ def text_diff(
             # Use slicemaps to figure out which parts of the unnormalized text this region corresponds to
             clean_ref_sli = slice(clean_ref_pos, clean_ref_pos + len(region.reference_text))
             clean_comp_sli = slice(clean_comp_pos, clean_comp_pos + len(region.compared_text))
-            if region is clean_diff[-1]:
-                # Ensure we span the entirety of the unnormalized text, slicemaps are not guaranteed to be surjective
-                raw_ref_sli = slice(raw_ref_pos, len(raw_ref))
-                raw_comp_sli = slice(raw_comp_pos, len(raw_comp))
-            else:
+            if region is not clean_diff[-1]:
                 raw_ref_sli = slice(raw_ref_pos, max(clean2raw_ref[clean_ref_sli].stop, raw_ref_pos))
                 raw_comp_sli = slice(raw_comp_pos, max(clean2raw_comp[clean_comp_sli].stop, raw_comp_pos))
-
+            else:
+                # Ensure we span the entirety of the unnormalized text, slicemaps are not guaranteed to be surjective
+                # Typical example: a final punctuation that is erased in text normalization.
+                raw_ref_sli = slice(raw_ref_pos, len(raw_ref))
+                raw_comp_sli = slice(raw_comp_pos, len(raw_comp))
 
             # Modify the region in place with the unnormalized text
             region.reference_text = raw_ref[raw_ref_sli]
