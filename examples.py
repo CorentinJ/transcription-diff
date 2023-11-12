@@ -1,11 +1,14 @@
 import logging
+import sys
 
 import librosa
+import torch
 
 from transcription_diff.text_diff import transcription_diff, render_text_diff
 
 
-logging.basicConfig(level="INFO")
+logging.basicConfig(level="INFO", stream=sys.stdout)
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 audio_fpath = librosa.example("libri2")
@@ -24,13 +27,15 @@ correct_transcription = \
 
 
 # Running with all default parameters
-diff = transcription_diff(correct_transcription, wav, sr)
+diff = transcription_diff(correct_transcription, wav, sr, device=DEVICE)
 print(render_text_diff(diff))
 
 # Providing hints to custom words to whisper has a chance to make it transcribe that word
-diff = transcription_diff(correct_transcription, wav, sr, custom_words=["Guenever"])
+diff = transcription_diff(correct_transcription, wav, sr, custom_words=["Guenever"], device=DEVICE)
 print(render_text_diff(diff))
 
 # Increase the model size generally increases ASR accuracy
-diff = transcription_diff(correct_transcription, wav, sr, custom_words=["Guenever"], whisper_model_size=3)
+diff = transcription_diff(
+    correct_transcription, wav, sr, custom_words=["Guenever"], whisper_model_size=3, device=DEVICE
+)
 print(render_text_diff(diff))

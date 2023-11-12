@@ -5,3 +5,4 @@ librosa
 langcodes
 colorama
 pytest
+torch
