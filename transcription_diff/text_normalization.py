@@ -173,9 +173,9 @@ def normalize_text(raw_text: str, lang_id: str, fault_tolerant=False) -> Tuple[s
     - raw2clean: the mapping from raw text to clean text
     """
     # Define the ops to apply
-    text_cleaning_ops = [standardize_characters, collapse_whitespace]
+    text_cleaning_ops = [standardize_characters]
     if Language.get(lang_id).language == "en":
         text_cleaning_ops.extend([expand_abbreviations, normalize_numbers])
-    text_cleaning_ops.append(keep_pronounced_only)
+    text_cleaning_ops.extend([keep_pronounced_only, collapse_whitespace])
 
     return apply_text_transforms_with_mapping(raw_text, text_cleaning_ops, fault_tolerant)
