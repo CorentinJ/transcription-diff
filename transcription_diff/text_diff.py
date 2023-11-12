@@ -34,14 +34,18 @@ def clean_text_diff(ref_text: str, compared: str) -> List[TextDiffRegion]:
             pronunciation_match=(ref_word == compared_word)
         ))
 
-    # Re-add the spaces
-    for first_region, second_region in zip(regions, regions[1:]):
-        if first_region.pronunciation_match:
-            first_region.reference_text += " "
-            first_region.compared_text += " "
-        else:
-            second_region.reference_text = " " + second_region.reference_text
-            second_region.compared_text = " " + second_region.compared_text
+    # Re-add the spaces between words, and prefer to add them on identical regions rather than non-identical ones
+    for text_attr in ("reference_text", "compared_text"):
+        last_word_region = None
+        for region in regions:
+            if not getattr(region, text_attr):
+                continue
+            if last_word_region:
+                if last_word_region.pronunciation_match:
+                    setattr(last_word_region, text_attr, getattr(last_word_region, text_attr) + " ")
+                else:
+                    setattr(region, text_attr, " " + getattr(region, text_attr))
+            last_word_region = region
 
     # Compress
     new_regions = []
@@ -80,8 +84,8 @@ def text_diff(
             # Use slicemaps to figure out which parts of the unnormalized text this region corresponds to
             clean_ref_sli = slice(clean_ref_pos, clean_ref_pos + len(region.reference_text))
             clean_comp_sli = slice(clean_comp_pos, clean_comp_pos + len(region.compared_text))
-            raw_ref_sli = slice(raw_ref_pos, raw_ref_pos + clean2raw_ref[clean_ref_sli].stop)
-            raw_comp_sli = slice(raw_comp_pos, raw_comp_pos + clean2raw_comp[clean_comp_sli].stop)
+            raw_ref_sli = slice(raw_ref_pos, max(clean2raw_ref[clean_ref_sli].stop, raw_ref_pos))
+            raw_comp_sli = slice(raw_comp_pos, max(clean2raw_comp[clean_comp_sli].stop, raw_comp_pos))
 
             # Modify the region in place with the unnormalized text
             region.reference_text = raw_ref[raw_ref_sli]
