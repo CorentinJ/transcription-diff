@@ -44,22 +44,22 @@ def get_whisper_model(model_size=3, english_only=False, device="cuda"):
 
 @overload
 def whisper_asr(
-    wav: np.ndarray, sr, *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    wav: np.ndarray, sr, *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> Tuple[str, str]: ...
 @overload
 def whisper_asr(
-    wavs: Iterable[np.ndarray], sr, *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    wavs: Iterable[np.ndarray], sr, *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> Tuple[List[str], str]: ...
 @overload
 def whisper_asr(
-    fpath: Union[str, Path], *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    fpath: Union[str, Path], *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> Tuple[str, str]: ...
 @overload
 def whisper_asr(
-    fpaths: Iterable[Union[str, Path]], *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    fpaths: Iterable[Union[str, Path]], *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> Tuple[List[str], str]: ...
 def whisper_asr(
-    *args, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    *args, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> Union[Tuple[str, str], Tuple[List[str], str]]:
     """
     Performs automatic speech recognition on the given audio(s). Supports most languages, and can perform automatic
@@ -72,6 +72,8 @@ def whisper_asr(
     :param accuracy_mode: controls the accuracy-speed tradeoff. Ranges from 1 to 5, which 5 being the highest
     accuracy (largest model size) but the lowest inference speed. This parameter has a large impact, consider setting
     it as high as you can afford to.
+    :param custom_words: a list of words likely to be unknown to Whisper. We'll attempt to make whisper aware of them
+    by passing them to the initial prompt.
     :return: a tuple:
     - The transcription(s) as a string or list of strings
     - The detected language ID of the first sample if <audio_lang> was None, <audio_lang> otherwise.
@@ -134,6 +136,7 @@ def whisper_asr(
         without_timestamps=True,
         fp16=device.type != "cpu",
         # TODO: initial prompt
+        prompt=f"CUSTOM_WORDS={','.join(custom_words)}" if custom_words else None,
     )
     with torch.inference_mode():
         outputs = model.decode(mels.to(device), options)

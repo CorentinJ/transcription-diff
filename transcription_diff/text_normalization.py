@@ -114,7 +114,8 @@ def standardize_characters(text: str):
 
 
 def keep_pronounced_only(text: str):
-    kept_idx = [i for i, c in enumerate(text) if c.isalnum() or c in ("-", "'", " ")]
+    text = text.replace("-", " ")
+    kept_idx = [i for i, c in enumerate(text) if c.isalnum() or c in ("'", " ")]
     new_text = "".join(text[i] for i in kept_idx).lower()
     new2orig = SliceMap.from_1to1_map(kept_idx, len(text))
     return new_text, new2orig.inverse()

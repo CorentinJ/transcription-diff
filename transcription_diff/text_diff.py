@@ -108,22 +108,24 @@ def text_diff(
 
 @overload
 def transcription_diff(
-    text: str, wav: np.ndarray, sr, *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    text: str, wav: np.ndarray, sr, *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> List[TextDiffRegion]: ...
 @overload
 def transcription_diff(
-    texts: List[str], wavs: Iterable[np.ndarray], sr, *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    texts: List[str], wavs: Iterable[np.ndarray], sr, *, audio_lang: str=None, accuracy_mode=2, custom_words=[],
+    device="cuda"
 ) -> List[List[TextDiffRegion]]: ...
 @overload
 def transcription_diff(
-    text: str, fpath: Union[str, Path], *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    text: str, fpath: Union[str, Path], *, audio_lang: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> List[TextDiffRegion]: ...
 @overload
 def transcription_diff(
-    texts: List[str], fpaths: Iterable[Union[str, Path]], *, audio_lang: str=None, accuracy_mode=2, device="cuda"
+    texts: List[str], fpaths: Iterable[Union[str, Path]], *, audio_lang: str=None, accuracy_mode=2, custom_words=[],
+    device="cuda"
 ) -> List[List[TextDiffRegion]]: ...
 def transcription_diff(
-    *args, lang_id: str=None, accuracy_mode=2, device="cuda"
+    *args, lang_id: str=None, accuracy_mode=2, custom_words=[], device="cuda"
 ) -> Union[List[TextDiffRegion], List[List[TextDiffRegion]]]:
     # Arg parsing
     texts, args = args[0], args[1:]
@@ -131,7 +133,9 @@ def transcription_diff(
         texts = [texts]
 
     # Perform ASR
-    asr_texts, lang_id = whisper_asr(*args, audio_lang=lang_id, accuracy_mode=accuracy_mode, device=device)
+    asr_texts, lang_id = whisper_asr(
+        *args, audio_lang=lang_id, accuracy_mode=accuracy_mode, custom_words=custom_words, device=device
+    )
     if isinstance(asr_texts, str):
         asr_texts = [asr_texts]
 

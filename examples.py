@@ -25,3 +25,7 @@ correct_transcription = \
 # Running with all default parameters
 diff = transcription_diff(correct_transcription, wav, sr)
 print(render_text_diff(diff))
+
+#
+diff = transcription_diff(correct_transcription, wav, sr, custom_words=["Guenever"])
+print(render_text_diff(diff))
