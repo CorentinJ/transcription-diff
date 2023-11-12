@@ -4,3 +4,4 @@ openai-whisper
 librosa
 langcodes
 colorama
+pytest
