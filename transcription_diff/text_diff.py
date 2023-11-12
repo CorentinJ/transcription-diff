@@ -35,8 +35,15 @@ def clean_text_diff(ref_text: str, compared: str) -> List[TextDiffRegion]:
             ref_word if isinstance(ref_word, str) else "",
             compared_word if isinstance(compared_word, str) else "",
         ))
-        regions.append(TextDiffRegion(" ", " "))
-    regions = regions[:-1]
+
+    # Re-add the spaces
+    for first_region, second_region in zip(regions, regions[1:]):
+        if first_region.is_identical:
+            first_region.reference_text += " "
+            first_region.compared_text += " "
+        else:
+            second_region.reference_text = " " + second_region.reference_text
+            second_region.compared_text = " " + second_region.compared_text
 
     # Compress
     new_regions = []
