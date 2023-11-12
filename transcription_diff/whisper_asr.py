@@ -38,6 +38,7 @@ def get_whisper_model(model_size=3, english_only=False, device="cuda"):
     if english_only and model_size != 5:
         model_name += ".en"
 
+    logger.info(f"Loading whisper model \"{model_name}\" on {device}")
     return whisper.load_model(model_name, device=device)
 
 
@@ -112,6 +113,17 @@ def whisper_asr(
         )
     wavs = [whisper.pad_or_trim(wav) for wav in wavs]
     mels = torch.stack([whisper.log_mel_spectrogram(wav) for wav in wavs])
+
+    # Ensuring the right device is selected
+    if torch.device(device).type == "cuda" and not torch.cuda.is_available():
+        logger.warning(
+            "CUDA is not available on your torch install, whisper will run on CPU instead. If you do have a "
+            "CUDA-compatible GPU available, you may reinstall torch this way to enable CUDA:\n"
+            "\tpip uninstall torch\n"
+            "\tpip cache purge\n"
+            "\tpip install torch -f https://download.pytorch.org/whl/torch_stable.html\n"
+        )
+        device = "cpu"
 
     # Inference
     model = get_whisper_model(model_size=accuracy_mode, english_only=(audio_lang == "en"), device=device)

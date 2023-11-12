@@ -1,6 +1,12 @@
+import logging
+
 import librosa
 
 from transcription_diff.text_diff import transcription_diff, render_text_diff
+
+
+logging.basicConfig(level="INFO")
+
 
 audio_fpath = librosa.example("libri2")
 wav, sr = librosa.core.load(audio_fpath)
