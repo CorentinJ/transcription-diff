@@ -8,6 +8,7 @@ from minineedle import needle
 
 from transcription_diff.text_normalization import normalize_text
 from transcription_diff.whisper_asr import whisper_asr
+from colorama import Fore as colors
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,10 @@ def clean_text_diff(ref_text: str, compared: str) -> List[TextDiffRegion]:
     # Arrange
     regions = []
     for ref_word, compared_word in zip(*alignment.get_aligned_sequences()):
-        regions.append(TextDiffRegion(ref_word, compared_word))
+        regions.append(TextDiffRegion(
+            ref_word if isinstance(ref_word, str) else "",
+            compared_word if isinstance(compared_word, str) else "",
+        ))
         regions.append(TextDiffRegion(" ", " "))
     regions = regions[:-1]
 
@@ -113,6 +117,8 @@ def transcription_diff(
 
     # Perform ASR
     asr_texts, lang_id = whisper_asr(*args, audio_lang=lang_id, accuracy_mode=accuracy_mode, device=device)
+    if isinstance(asr_texts, str):
+        asr_texts = [asr_texts]
 
     # Get the diffs
     diffs = text_diff(texts, asr_texts, lang_id)
@@ -121,3 +127,26 @@ def transcription_diff(
         return diffs[0]
     else:
         return diffs
+
+
+def render_text_diff(text_diff: List[TextDiffRegion], with_colors=True) -> str:
+    str_out = ""
+    for region in text_diff:
+        if region.is_identical:
+            str_out += region.reference_text
+        else:
+            str_out += "("
+            if with_colors:
+                str_out += colors.RED
+            str_out += region.compared_text
+            if with_colors:
+                str_out += colors.RESET
+            str_out += "|"
+            if with_colors:
+                str_out += colors.GREEN
+            str_out += region.reference_text
+            if with_colors:
+                str_out += colors.RESET
+            str_out += ")"
+
+    return str_out

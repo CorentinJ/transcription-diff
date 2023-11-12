@@ -98,7 +98,10 @@ def whisper_asr(
 
     # Resample
     # TODO?: batched resampling using torchaudio for efficiency
-    wavs = [librosa.core.resample(wav, sr, _WHISPER_SAMPLE_RATE, "kaiser_fast") for wav in wavs]
+    wavs = [
+        librosa.core.resample(wav, orig_sr=sr, target_sr=_WHISPER_SAMPLE_RATE, res_type="soxr_mq")
+        for wav in wavs
+    ]
 
     # Format inputs
     if any(len(wav) > _WHISPER_CHUNK_SIZE for wav in wavs):

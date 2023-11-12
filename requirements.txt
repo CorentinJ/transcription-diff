@@ -3,3 +3,4 @@ numpy
 openai-whisper
 librosa
 langcodes
+colorama
