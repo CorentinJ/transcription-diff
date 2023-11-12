@@ -14,10 +14,11 @@ from transcription_diff.find_lang_match import find_lang_match
 
 
 logger = logging.getLogger(__name__)
+_WHISPER_LANGUAGES = list(_WHISPER_LANGUAGES)
 
 
 # TODO: let the user handle the cache
-@lru_cache(maxsize=2)
+@lru_cache(maxsize=1)
 def get_whisper_model(model_size=3, english_only=False, device="cuda"):
     """
     Available models: https://github.com/openai/whisper/blob/main/model-card.md
@@ -91,6 +92,7 @@ def whisper_asr(
         wavs, sr = args
         if single := isinstance(wavs, np.ndarray):
             wavs = [wavs]
+        wavs = [wav.astype(np.float32) for wav in wavs]
 
     # Lang args
     if audio_lang:

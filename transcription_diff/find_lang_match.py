@@ -4,7 +4,7 @@ from langcodes import Language
 
 
 def find_lang_match(
-    req_lang: Union[str, Language], avail_langs: Union[List[str], List[Language]], territory_match=True,
+    req_lang: Union[str, Language], avail_langs: Union[List[str], List[Language]], territory_match=False,
 ) -> List[int]:
     """
     Find the best match for a requested language in a list of available languages.
