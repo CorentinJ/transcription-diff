@@ -1,8 +1,7 @@
-minineedle
-numpy
-openai-whisper
-librosa
-langcodes
-colorama
-pytest
-torch
+minineedle>=3.0.0
+numpy>=1.18.0
+openai-whisper>=20230918
+librosa>=0.9.0
+langcodes>=3.0.0
+colorama>=0.4.3
+torch>=2.0.0
