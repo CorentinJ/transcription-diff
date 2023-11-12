@@ -18,10 +18,7 @@ logger = logging.getLogger(__name__)
 class TextDiffRegion:
     reference_text: str
     compared_text: str
-
-    @property
-    def is_identical(self) -> bool:
-        return self.reference_text == self.compared_text
+    pronunciation_match: bool
 
 
 def clean_text_diff(ref_text: str, compared: str) -> List[TextDiffRegion]:
@@ -34,11 +31,12 @@ def clean_text_diff(ref_text: str, compared: str) -> List[TextDiffRegion]:
         regions.append(TextDiffRegion(
             ref_word if isinstance(ref_word, str) else "",
             compared_word if isinstance(compared_word, str) else "",
+            pronunciation_match=(ref_word == compared_word)
         ))
 
     # Re-add the spaces
     for first_region, second_region in zip(regions, regions[1:]):
-        if first_region.is_identical:
+        if first_region.pronunciation_match:
             first_region.reference_text += " "
             first_region.compared_text += " "
         else:
@@ -48,7 +46,7 @@ def clean_text_diff(ref_text: str, compared: str) -> List[TextDiffRegion]:
     # Compress
     new_regions = []
     for region in regions:
-        if new_regions and (new_regions[-1].is_identical == region.is_identical):
+        if new_regions and (new_regions[-1].pronunciation_match == region.pronunciation_match):
             new_regions[-1].reference_text += region.reference_text
             new_regions[-1].compared_text += region.compared_text
         else:
@@ -139,7 +137,7 @@ def transcription_diff(
 def render_text_diff(text_diff: List[TextDiffRegion], with_colors=True) -> str:
     str_out = ""
     for region in text_diff:
-        if region.is_identical:
+        if region.pronunciation_match:
             str_out += region.reference_text
         else:
             str_out += "("
