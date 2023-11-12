@@ -22,7 +22,7 @@ you're a perfect sphere in a vacuum
 
 ### Mechanism
 - The library relies on [openai-whisper](https://github.com/openai/whisper) to perform Audio Speech Recognition unguided by the transcription
-- It then compares the expected transcription to the output of Whisper, ignoring superfluous data
+- It then compares the expected transcription to the output of Whisper, ignoring superfluous characters
 - It returns the output in a simple structure, keeping the original text format of the transcription
 
 ### Limitations
