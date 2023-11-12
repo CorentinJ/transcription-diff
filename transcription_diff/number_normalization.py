@@ -314,7 +314,6 @@ def _expand_other_unit(text, mapping, regex, one, many):
 
 
 def _expand_year(text, mapping):
-    # FIXME: "In 1950 cases..." will be incorrectly expanded as a year
     m = re.findall(_year_re, text)
     for result in m:
         prep, mill_cent, dec_year, post = str(result[0]), str(result[2]), str(result[3]), str(result[4])
@@ -454,8 +453,6 @@ def _expand_ordinal(text, mapping):
 
 
 def normalize_numbers(text: str):
-    # N.B.: all number norm functions use an old word-level mapping convention, hence we have convert our inputs
-    # and outputs to that format
     words = re.split("(\s+)", text)
     mapping = list(zip(words, [SliceMap.identity(len(word)) for word in words]))
 

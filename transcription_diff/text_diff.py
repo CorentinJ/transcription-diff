@@ -127,6 +127,7 @@ def transcription_diff(
 def transcription_diff(
     *args, lang_id: str=None, whisper_model_size=2, custom_words=[], device="cuda"
 ) -> Union[List[TextDiffRegion], List[List[TextDiffRegion]]]:
+    # TODO: doc
     # Arg parsing
     texts, args = args[0], args[1:]
     if single := isinstance(texts, str):
