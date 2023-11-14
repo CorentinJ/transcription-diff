@@ -3,7 +3,7 @@ A small python library to find differences between audio and transcriptions
 
 Example (audio as mp4 to allow an embed):
 
-https://github.com/CorentinJ/transcription-diff/assets/12038136/3169de17-f4bc-4596-b4ec-0f8cbfe787d3
+https://github.com/CorentinJ/transcription-diff/assets/12038136/41fda0a8-92bb-46fe-a7b7-903ccfed3463
 
 ```python
 from transcription_diff.text_diff import transcription_diff, render_text_diff
